@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "FunctionLib.h"
+#include "ColorTracking.h"
 
 #define CAMERA_RESOLUTION_X 640
 #define CAMERA_RESOLUTION_Y 480
@@ -27,6 +28,7 @@ int main()
 	String _windowName = "OpenCV Sample";
 	VideoCapture _capture;
 	Vec3i colorValue;
+	ColorTracking GreyFilter1;
 
 	FunctionLib::GetRoi();
 
@@ -71,14 +73,22 @@ int main()
 		cvtColor(frame, imgHSV, COLOR_BGR2HSV);  
 		colorValue = FunctionLib::GetPixelInfo(imgHSV, clickedX, clickedY, true);
 
+		// 
+		GreyFilter1 = ColorTracking();
+		GreyFilter1.SetColorRangeHSVGreys(colorValue,10);
 
-
-		while (!frame.empty()) {
-			cap >> frame;          //copy webcam stream to image
+		while (1) {
+			          //copy webcam stream to image
+			if (frame.empty())
+				break;
+			GreyFilter1.GetColorFilteredImage(colorValue, &imgHSV);
 			cvtColor(frame, grayscaleFrame, COLOR_BGR2GRAY);
 			imshow("window", frame);          //print image to screen
-			imshow(_windowName, grayscaleFrame);
+			imshow(_windowName, GreyFilter1.theFilteredImage);
 			waitKey(33);          //delay 33ms
+			cap >> frame; // next frame
+			cvtColor(frame, imgHSV, COLOR_BGR2HSV);
+
 
 
 		}

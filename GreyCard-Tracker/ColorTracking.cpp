@@ -8,8 +8,10 @@ ColorTracking::ColorTracking()
 }
 
 
-ColorTracking::ColorTracking(Vec3i HSVcolor)
+ColorTracking::ColorTracking(Vec3i HSVcolor, Mat * inputHSV)
 {
+
+	GetColorFilteredImage(HSVcolor, inputHSV);
 }
 
 
@@ -42,7 +44,7 @@ void ColorTracking::SetPixelArea(int minS, int maxS) {
 	iHighArea = maxS;
 }
 
-
+// OLD.  Used to segmentate high 
 void ColorTracking::SetColorRangeHSV(Vec3i value, Vec3i* MaxValue, Vec3i* MinValue) {
 	// Pre-set variables
 	int MaxHuelimit = 179; // Limit for openCV
@@ -62,7 +64,7 @@ void ColorTracking::SetColorRangeHSV(Vec3i value, Vec3i* MaxValue, Vec3i* MinVal
 	if (LowerHue < 0)
 		LowerHue = 0;
 
-	// Don´t use pointers anymore
+	// Don´t use pointers anymore -> CHANGE IT!
 	MaxValue[0][0] = UpperHue;
 	MaxValue[0][1] = upperSat;
 	MaxValue[0][2] = upperValue;
@@ -77,18 +79,71 @@ void ColorTracking::SetColorRangeHSV(Vec3i value, Vec3i* MaxValue, Vec3i* MinVal
 }
 
 
+void ColorTracking::SetColorRangeHSVGreys(Vec3i value, int Srange, int Vrange) {
+	// Pre-set variables
+	int MaxHuelimit = 179; // Limit for openCV
+	int MinHuelimit = 0;
+	int MaxSatlimit = 40;
+	int MinSatlimit = 0;
+	int MaxVallimit = 255; // white
+	int MinVallimit = 0;
 
-/* Get the color filtered image by getting the similar color tones. An create a segmentation using those reference tones. */
-void ColorTracking::GetColorFilteredImage(Vec3i color, Mat * inputHSV, Mat *  output) {
 
-	Vec3i MaxA = Vec3i();
-	Vec3i MinA = Vec3i();
-	ColorTracking::SetColorRangeHSV(color, &MaxA, &MinA);
+	// 0 - HUE; 1 - Saturation; 2 - Value
+
+	// Hue -> we don´t care much since we are working with low saturation colors.
+
+	// Saturation -> Only looking for a low range =~ [0,40]?
+	int Sat = value[1];  
+	int UpperSat = Sat + Srange;
+	int LowerSat = Sat - Srange;
+	if (UpperSat > MaxSatlimit)
+		UpperSat = MaxSatlimit;
+
+	if (LowerSat < MinSatlimit)
+		LowerSat = MinSatlimit;
+
+	// Value -> Main parameter that limits the grey color search
+	int Val = value[2];
+	int UpperVal = Val + Vrange;
+	int LowerVal = Val - Vrange;
+	if (UpperVal > MaxVallimit)
+		UpperVal = MaxVallimit;
+
+	if (LowerVal < MinVallimit)
+		LowerVal = MinVallimit;
+
+
+	// Don´t use pointers anymore
+	iLowH = MinHuelimit;
+	iHighH = MaxHuelimit;
+
+	iLowS = LowerSat;
+	iHighS = UpperSat;
+
+	iLowV = LowerVal;
+	iHighV = UpperVal;
 
 	// Debugging info.
-	//cout << "MAX:  " << MaxA[0] << MaxA[1] << MaxA[2] << endl;
-	//cout << "MIN:  " << MinA[0] << MinA[1] << MinA[2] << endl;
+	cout << "MAX:  " << iLowH << " ," <<iLowS << " ," << iLowV << endl;
+	cout << "MIN:  " << iHighH << " ," << iHighS << " ,"  << iHighV << endl;
 
-	inRange(*inputHSV, MinA, MaxA, *output);
+	// case that is from  177 to 10 -> 177,178,179,0,1,2,...,10?
 
+}
+
+
+
+/* Get the color filtered image by getting the similar color tones. An create a segmentation using those reference tones. */
+void ColorTracking::GetColorFilteredImage(Vec3i color, Mat * inputHSV) {
+
+
+	//SetColorRangeHSVGreys(color);
+	// NOTE -> Make this vectors as the class baseline, instead of the "HIGH" and "LOW"
+	Vec3i MinA = Vec3i(iLowH, iLowS, iLowV);
+	Vec3i MaxA = Vec3i(iHighH, iHighS, iHighV);
+
+
+
+	inRange(*inputHSV, MinA, MaxA, theFilteredImage);
 }

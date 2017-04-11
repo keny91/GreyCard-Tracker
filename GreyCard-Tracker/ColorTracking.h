@@ -28,7 +28,7 @@ private:
 public:
 	double aArea;
 	ColorTracking();
-	ColorTracking(Vec3i HSVcolor);
+	ColorTracking(Vec3i HSVcolor, Mat * inputHSV);
 	~ColorTracking();
 	int posX, posY;
 	int prevPosX, prevPosY;
@@ -41,10 +41,11 @@ public:
 	void SetHue(int minH, int maxH);
 	void SetValue(int minv, int maxv);
 	void SetSaturation(int minH, int maxH);
+	void SetColorRangeHSVGreys(Vec3i value, int Srange = 5 , int Vrange = 10);
 
 	bool Detected;
 	static void SetColorRangeHSV(Vec3i pixel, Vec3i*MaxValue, Vec3i* MinValue);
 	//static void CreateFilteredImage(Mat *Image, Mat* OutputImage, Vec3i color);
-	static void GetColorFilteredImage(Vec3i HSVcolor, Mat * output, Mat * inputHSV);
+	void GetColorFilteredImage(Vec3i HSVcolor, Mat *inputImage);
 	static void FilterBWbyThreshold(Mat* InputImage, Mat* OutputBW, int TH = 150);
 };
