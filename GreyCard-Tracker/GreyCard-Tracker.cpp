@@ -22,11 +22,11 @@ int main()
 
 	Mat frame;          //Create Matrix to store image
 	VideoCapture cap;          //initialize capture
-	cap.open(0);
+	cap.open("./Tracking_GreyCard.mov");
 	Mat grayscaleFrame, imgHSV;
 	String _windowName = "OpenCV Sample";
 	VideoCapture _capture;
-	
+	Vec3i colorValue;
 
 	FunctionLib::GetRoi();
 
@@ -69,29 +69,31 @@ int main()
 		// Transform to the HSV Color space, where we don´t care much about the HUE value and the saturation will be minimum to be a grey. 
 		// The value will be defining how dark the grey is from Black to White.
 		cvtColor(frame, imgHSV, COLOR_BGR2HSV);  
-		Vec3i colorValue = FunctionLib::GetPixelInfo(imgHSV, clickedX, clickedY, true);
+		colorValue = FunctionLib::GetPixelInfo(imgHSV, clickedX, clickedY, true);
 
 
 
-		while (1) {
+		while (!frame.empty()) {
 			cap >> frame;          //copy webcam stream to image
 			cvtColor(frame, grayscaleFrame, COLOR_BGR2GRAY);
 			imshow("window", frame);          //print image to screen
 			imshow(_windowName, grayscaleFrame);
 			waitKey(33);          //delay 33ms
+
+
 		}
-		return 0;
-
-
+		
 		break;
+
 	case 2:
 		cout << "Selected 2." << endl;
 		break;
 	default:
 		break;
+
 	}
 
-
+	return 0;
 
 
 }
