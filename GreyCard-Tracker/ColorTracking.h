@@ -47,5 +47,4 @@ public:
 	static void SetColorRangeHSV(Vec3i pixel, Vec3i*MaxValue, Vec3i* MinValue);
 	//static void CreateFilteredImage(Mat *Image, Mat* OutputImage, Vec3i color);
 	void GetColorFilteredImage(Vec3i HSVcolor, Mat *inputImage);
-	static void FilterBWbyThreshold(Mat* InputImage, Mat* OutputBW, int TH = 150);
 };

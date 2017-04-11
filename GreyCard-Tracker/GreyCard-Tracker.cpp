@@ -21,16 +21,16 @@ int clickedY = 0;
 int main()
 {
 
-	Mat frame;          //Create Matrix to store image
+	Mat frame, ColorFilteredImage;          //Create Matrix to store image
 	VideoCapture cap;          //initialize capture
 	cap.open("./Tracking_GreyCard.mov");
 	Mat grayscaleFrame, imgHSV;
-	String _windowName = "OpenCV Sample";
+	String _windowName = "Original Frame";
 	VideoCapture _capture;
-	Vec3i colorValue;
-	ColorTracking GreyFilter1;
-
-	FunctionLib::GetRoi();
+	Vec3i colorValue, colorValue2;
+	ColorTracking GreyFilter1, GreyFilter2;
+	vector<Point> Contour;
+	Scalar color(255, 50, 255);
 
 	// Check if the default camera is opened.
 	if (_capture.isOpened()) {
@@ -43,6 +43,8 @@ int main()
 	cout << "	2 - Default Picker Mode:" << endl<< endl;
 	int mode = -1;
 	string temp;
+
+
 	while (mode != 1 && mode !=2) {
 		cin >> temp;
 		mode = stoi(temp);
@@ -51,11 +53,17 @@ int main()
 			cout << "Invalid Mode input: " << mode << ", select a valid input: 1 or 2."<< endl;
 	}
 
+
+
+
 	switch (mode) {
+
+
+
 	case 1:
 		cout << "Selected 1." << endl;
 
-		namedWindow(_windowName, 1);
+
 		cap >> frame;  // Get the first image of the video
 
 		cout << "Waiting for click input.";
@@ -82,9 +90,20 @@ int main()
 			if (frame.empty())
 				break;
 			GreyFilter1.GetColorFilteredImage(colorValue, &imgHSV);
-			cvtColor(frame, grayscaleFrame, COLOR_BGR2GRAY);
-			imshow("window", frame);          //print image to screen
+			//cvtColor(frame, grayscaleFrame, COLOR_BGR2GRAY);
 			imshow(_windowName, GreyFilter1.theFilteredImage);
+			ColorFilteredImage = GreyFilter1.theFilteredImage;
+
+			Contour = FunctionLib::FindLargestConnectedElement(ColorFilteredImage);
+			// Draw the largest contour using previously stored index.
+			//drawContours(dst, contours, largest_contour_index, color, CV_FILLED, 8, hierarchy); 
+			drawContours(frame, vector<vector<Point> >(1, Contour), -1, color, 1, 8);
+			//Contour.
+			Vec2i center = FunctionLib::FindCentroidOfContour(Contour);
+			circle(frame, center, 3, color);
+
+			imshow("Color Segmentation", frame);          //print image to screen
+			imshow("Error Window", GreyFilter1.theFilteredImage);
 			waitKey(33);          //delay 33ms
 			cap >> frame; // next frame
 			cvtColor(frame, imgHSV, COLOR_BGR2HSV);
@@ -95,8 +114,48 @@ int main()
 		
 		break;
 
+
+
+
+
 	case 2:
 		cout << "Selected 2." << endl;
+
+		cap >> frame;  // Get the first image of the video
+		cvtColor(frame, imgHSV, COLOR_BGR2HSV);
+		colorValue = Vec3i(30,6,123);  // From Stuying Color Picker
+		namedWindow(_windowName, 1);
+		
+		// 
+		GreyFilter1 = ColorTracking();
+		GreyFilter1.SetColorRangeHSVGreys(colorValue, 10);
+
+		while (1) {
+			//copy webcam stream to image
+			if (frame.empty())
+				break;
+			GreyFilter1.GetColorFilteredImage(colorValue, &imgHSV);
+			//cvtColor(frame, grayscaleFrame, COLOR_BGR2GRAY);
+			imshow(_windowName, GreyFilter1.theFilteredImage);
+			ColorFilteredImage = GreyFilter1.theFilteredImage;
+
+			Contour = FunctionLib::FindLargestConnectedElement(ColorFilteredImage);
+			// Draw the largest contour using previously stored index.
+			//drawContours(dst, contours, largest_contour_index, color, CV_FILLED, 8, hierarchy); 
+			drawContours(frame, vector<vector<Point> >(1, Contour), -1, color, 1, 8);
+			//Contour.
+
+
+			imshow("window", frame);          //print image to screen
+			imshow("Error Window", GreyFilter1.theFilteredImage);
+			waitKey(33);          //delay 33ms
+			cap >> frame; // next frame
+			cvtColor(frame, imgHSV, COLOR_BGR2HSV);
+
+
+
+		}
+
 		break;
 	default:
 		break;
