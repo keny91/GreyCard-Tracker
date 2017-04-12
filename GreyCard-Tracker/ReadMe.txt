@@ -1,30 +1,17 @@
 ﻿========================================================================
-    APLICACIÓN DE CONSOLA: GreyCard-Tracker Información general del proyecto
+    CONSOLE APP: GreyCard-Tracker
 ========================================================================
-
-AppWizard ha creado esta aplicación GreyCard-Tracker.
-
-Este archivo contiene un resumen de lo que encontrará en cada uno de los archivos que constituyen la aplicación GreyCard-Tracker.
-
-
-GreyCard-Tracker.vcxproj
-    Éste es el archivo de proyecto principal para los proyectos de VC++ generados mediante un Asistente para aplicaciones. Contiene información acerca de la versión de Visual C++ con la que se generó el archivo, así como información acerca de las plataformas, configuraciones y características del proyecto seleccionadas en el Asistente para aplicaciones.
-
-GreyCard-Tracker.vcxproj.filters
-    Éste es el archivo de filtros para los proyectos de VC++ generados mediante un asistente para aplicaciones. Contiene información acerca de la asociación entre los archivos del proyecto y los filtros. Esta asociación se usa en el IDE para mostrar la agrupación de archivos con extensiones similares bajo un nodo específico (por ejemplo, los archivos ".cpp" se asocian con el filtro"Archivos de código fuente").
-
-GreyCard-Tracker.cpp
-    Este es el archivo de código fuente de la aplicación principal.
+*GreyCard-Tracker.cpp 
+contains the "main" or point of exectution. Will read a video source stored in the root of this folder.
 
 /////////////////////////////////////////////////////////////////////////////
-Otros archivos estándar:
 
-StdAfx.h, StdAfx.cpp
-    Estos archivos se usan para compilar un archivo de encabezado precompilado (PCH) denominado GreyCard-Tracker.pch y un archivo de tipos precompilados llamado StdAfx.obj.
+*FunctionLib
+is a library of static functions, mostly hosting image morphology operations. 
 
 /////////////////////////////////////////////////////////////////////////////
-Otras notas:
 
-El asistente para aplicaciones utiliza comentarios "TODO:" para indicar las partes del código fuente que tendrá que agregar o personalizar.
+*ColorTracking.
+by entering a HSV color, a segmentated version of the image based in a low saturated, any HUE and the variable range of the parameter Value (which indicates the light/dark)
 
 /////////////////////////////////////////////////////////////////////////////
