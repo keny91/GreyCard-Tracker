@@ -48,12 +48,11 @@ int main()
 	while (mode != 1 && mode !=2) {
 		cin >> temp;
 		mode = stoi(temp);
-		cout << mode << endl;
 		if(mode != 1 && mode != 2)
 			cout << "Invalid Mode input: " << mode << ", select a valid input: 1 or 2."<< endl;
 	}
 
-
+	cap >> frame;  // Get the first image of the video
 
 
 	switch (mode) {
@@ -63,9 +62,6 @@ int main()
 	case 1:
 		cout << "Selected 1." << endl;
 
-
-		cap >> frame;  // Get the first image of the video
-
 		cout << "Waiting for click input.";
 		while (*state != 1) {
 			namedWindow(_windowName, 1);
@@ -74,44 +70,13 @@ int main()
 			setMouseCallback(_windowName, CallBackFunc, NULL);
 		}
 
-		cout << "" << endl;
+		cout <<  endl;
 
 		// Transform to the HSV Color space, where we don´t care much about the HUE value and the saturation will be minimum to be a grey. 
 		// The value will be defining how dark the grey is from Black to White.
 		cvtColor(frame, imgHSV, COLOR_BGR2HSV);  
 		colorValue = FunctionLib::GetPixelInfo(imgHSV, clickedX, clickedY, true);
-
-		// 
-		GreyFilter1 = ColorTracking();
-		GreyFilter1.SetColorRangeHSVGreys(colorValue,10);
-
-		while (1) {
-			          //copy webcam stream to image
-			if (frame.empty())
-				break;
-			GreyFilter1.GetColorFilteredImage(colorValue, &imgHSV);
-			//cvtColor(frame, grayscaleFrame, COLOR_BGR2GRAY);
-			imshow(_windowName, GreyFilter1.theFilteredImage);
-			ColorFilteredImage = GreyFilter1.theFilteredImage;
-
-			Contour = FunctionLib::FindLargestConnectedElement(ColorFilteredImage);
-			// Draw the largest contour using previously stored index.
-			//drawContours(dst, contours, largest_contour_index, color, CV_FILLED, 8, hierarchy); 
-			drawContours(frame, vector<vector<Point> >(1, Contour), -1, color, 1, 8);
-			//Contour.
-			Vec2i center = FunctionLib::FindCentroidOfContour(Contour);
-			circle(frame, center, 3, color);
-
-			imshow("Color Segmentation", frame);          //print image to screen
-			imshow("Error Window", GreyFilter1.theFilteredImage);
-			waitKey(33);          //delay 33ms
-			cap >> frame; // next frame
-			cvtColor(frame, imgHSV, COLOR_BGR2HSV);
-
-
-
-		}
-		
+	
 		break;
 
 
@@ -121,46 +86,58 @@ int main()
 	case 2:
 		cout << "Selected 2." << endl;
 
-		cap >> frame;  // Get the first image of the video
+		
 		cvtColor(frame, imgHSV, COLOR_BGR2HSV);
 		colorValue = Vec3i(30,6,123);  // From Stuying Color Picker
 		namedWindow(_windowName, 1);
-		
-		// 
-		GreyFilter1 = ColorTracking();
-		GreyFilter1.SetColorRangeHSVGreys(colorValue, 10);
-
-		while (1) {
-			//copy webcam stream to image
-			if (frame.empty())
-				break;
-			GreyFilter1.GetColorFilteredImage(colorValue, &imgHSV);
-			//cvtColor(frame, grayscaleFrame, COLOR_BGR2GRAY);
-			imshow(_windowName, GreyFilter1.theFilteredImage);
-			ColorFilteredImage = GreyFilter1.theFilteredImage;
-
-			Contour = FunctionLib::FindLargestConnectedElement(ColorFilteredImage);
-			// Draw the largest contour using previously stored index.
-			//drawContours(dst, contours, largest_contour_index, color, CV_FILLED, 8, hierarchy); 
-			drawContours(frame, vector<vector<Point> >(1, Contour), -1, color, 1, 8);
-			//Contour.
-
-
-			imshow("window", frame);          //print image to screen
-			imshow("Error Window", GreyFilter1.theFilteredImage);
-			waitKey(33);          //delay 33ms
-			cap >> frame; // next frame
-			cvtColor(frame, imgHSV, COLOR_BGR2HSV);
-
-
-
-		}
+	
 
 		break;
+
+
 	default:
 		break;
 
 	}
+
+
+
+
+
+	GreyFilter1 = ColorTracking();
+	GreyFilter1.SetColorRangeHSVGreys(colorValue, 10, 10);
+
+	while (1) {
+		//copy webcam stream to image
+		if (frame.empty())
+			break;
+		GreyFilter1.GetColorFilteredImage(colorValue, &imgHSV);
+		imshow("HSVColor Segmentation", GreyFilter1.theFilteredImage);
+		ColorFilteredImage = GreyFilter1.theFilteredImage;
+		FunctionLib::MorphologyOpenMat(&GreyFilter1.theFilteredImage, &ColorFilteredImage, 5);
+		//FunctionLib::MorphologyCloseMat(&GreyFilter1.theFilteredImage, &ColorFilteredImage, 3);
+		imshow("Closed Image", ColorFilteredImage);
+		Contour = FunctionLib::FindLargestConnectedElement(ColorFilteredImage);
+		
+		// Draw the largest contour using previously stored index.
+		//drawContours(dst, contours, largest_contour_index, color, CV_FILLED, 8, hierarchy); 
+		drawContours(frame, vector<vector<Point> >(1, Contour), -1, color, 1, 8);
+		//Contour.
+		Vec2i center = FunctionLib::FindCentroidOfContour(Contour);
+		circle(frame, center, 3, color);
+
+		imshow(_windowName, frame);          //print image to screen
+		imshow("Error Window", ColorFilteredImage);
+		waitKey(33);          //delay 33ms
+		cap >> frame; // next frame
+		cvtColor(frame, imgHSV, COLOR_BGR2HSV);
+
+
+
+	}
+
+
+
 
 	return 0;
 
