@@ -3,9 +3,8 @@
 
 
 
-
-
-// Gather the vector values of the pixel. Display info if the flag indicates so.
+/// <summary>  Gather the vector values of the pixel. Display info if the flag indicates so.
+/// </summary>
 Vec3i FunctionLib::GetPixelInfo(Mat TargetImage, int x, int y, bool displayConsoleInfo) {
 
 	cout << "clicked on: " << x << "," << y << endl;
@@ -19,7 +18,8 @@ Vec3i FunctionLib::GetPixelInfo(Mat TargetImage, int x, int y, bool displayConso
 
 
 
-// morphological opening (removes small objects from the foreground)
+/// <summary> Morphological closing (removes small holes from the foreground)
+/// </summary>
 void FunctionLib::MorphologyOpenMat(Mat* image, Mat *OutputImage, int maskSize) {
 	erode(*image, *OutputImage, getStructuringElement(MORPH_ELLIPSE, Size(maskSize, maskSize)));
 	dilate(*OutputImage, *OutputImage, getStructuringElement(MORPH_ELLIPSE, Size(maskSize, maskSize)));
@@ -27,20 +27,24 @@ void FunctionLib::MorphologyOpenMat(Mat* image, Mat *OutputImage, int maskSize) 
 }
 
 
-
-// morphological closing (removes small holes from the foreground)
+/// <summary> morphological opening (removes small objects from the foreground)
+/// </summary>
 void FunctionLib::MorphologyCloseMat(Mat* image, Mat *OutputImage, int maskSize) {
 	dilate(*image, *OutputImage, getStructuringElement(MORPH_ELLIPSE, Size(maskSize, maskSize)));
 	erode(*OutputImage, *OutputImage, getStructuringElement(MORPH_ELLIPSE, Size(maskSize, maskSize)));
 }
 
 
-// Do the cropping opperation.
+
+/// <summary> Do the cropping opperation given a rectangle.
+/// </summary>
 void FunctionLib::CropImage(Mat theimage, Mat* theOutput, Rect internalFrame) {
 	*theOutput = theimage(internalFrame);
 }
 
-// Given the values of the height and width of the internal frame
+
+/// <summary> Given the values of the height and width of the internal frame  find the inner rectangle
+/// </summary>
 Rect FunctionLib::DetermineCenteredRectangle(Mat theimage, int x, int y) {
 
 	Size s = theimage.size();
@@ -57,9 +61,9 @@ Rect FunctionLib::DetermineCenteredRectangle(Mat theimage, int x, int y) {
 
 
 
-/// <param> HSVImage an image already converted into the HSV color space
+/// <param> Binary image from the segmentation
 /// </param>
-/// <summary> Filter the image
+/// <summary> Get the contour with the largest amount of connected pixels.
 /// </summary>
 vector<Point> FunctionLib::FindLargestConnectedElement(Mat BinaryImage) {
 
@@ -87,54 +91,19 @@ vector<Point> FunctionLib::FindLargestConnectedElement(Mat BinaryImage) {
 	}
 
 
-	
-	//drawContours(dst, contours, largest_contour_index, color, CV_FILLED, 8, hierarchy); // Draw the largest contour using previously stored index.
-
-	//rectangle(src, bounding_rect, Scalar(0, 255, 0), 1, 8, 0);
-
-
-	// Minimum size check
-	/*
-	vector<Point> WhitePixels;
-	findNonZero(dst, WhitePixels);
-	if (WhitePixels.size() < 500) {
-		// None ATM
-	}
-	*/
-
-	// RoundnessCheck
-	/*
-	
-		DO SOMETHING
-	
-	*/
-
-
 	return contours[largest_contour_index];
 
 }
 
 
 
+
+/// <param> the Contour to find its center
+/// </param>
+/// <summary> Determine the center of the contour given the contours´s moments
+/// </summary>
 Vec2i FunctionLib::FindCentroidOfContour(vector<Point> theContour) {
 
-	/*
-	Vec2f mathCenter = Vec2f(0.f,0.f);
-	
-	for (int i = 0; i < theContour.size(); i++) {
-		mathCenter[0] += theContour[0].x;
-		mathCenter[1] += theContour[1].y;
-	}
-
-	cout << theContour.size() << endl;
-
-	mathCenter[0] /= theContour.size();
-	mathCenter[1] /= theContour.size();
-
-
-	/// Find contours
-	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
-	*/
 	/// Get the moments
 	vector<Moments> mu(theContour.size());
 	for (int i = 0; i < theContour.size(); i++)

@@ -2,12 +2,14 @@
 #include "ColorTracking.h"
 
 
-
+/// <summary> Default Constructor.
+/// </summary>
 ColorTracking::ColorTracking()
 {
 }
 
-
+/// <summary> Constructor that inmediatelly proceeds to segmentation.
+/// </summary>
 ColorTracking::ColorTracking(Vec3i HSVcolor, Mat * inputHSV)
 {
 
@@ -15,13 +17,14 @@ ColorTracking::ColorTracking(Vec3i HSVcolor, Mat * inputHSV)
 }
 
 
-
+/// <summary> Default Destructor.
+/// </summary>
 ColorTracking::~ColorTracking()
 {
 }
 
 
-// "Sets"  Implementation
+// "Sets"  Implementation given that we are working with private values.
 
 
 void ColorTracking::SetHue(int minH, int maxH) {
@@ -79,14 +82,15 @@ void ColorTracking::SetColorRangeHSV(Vec3i value, Vec3i* MaxValue, Vec3i* MinVal
 }
 
 
+
 void ColorTracking::SetColorRangeHSVGreys(Vec3i value, int Srange, int Vrange) {
-	// Pre-set variables
-	int MaxHuelimit = 179; // Limit for openCV
-	int MinHuelimit = 0;
-	int MaxSatlimit = 40;
-	int MinSatlimit = 0;
-	int MaxVallimit = 255; // white
-	int MinVallimit = 0;
+	
+	int MaxHuelimit = MAX_GREY_HUE; // Limit for openCV
+	int MinHuelimit = MIN_GREY_HUE;
+	int MaxSatlimit = MAX_GREY_SAT;
+	int MinSatlimit = MIN_GREY_SAT;
+	int MaxVallimit = MAX_GREY_VAL; // white
+	int MinVallimit = MIN_GREY_VAL;
 
 
 	// 0 - HUE; 1 - Saturation; 2 - Value

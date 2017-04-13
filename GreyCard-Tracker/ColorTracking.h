@@ -6,10 +6,31 @@
 #include "FunctionLib.h"
 
 
+/*
+   Description:
+
+   by entering a HSV color, a segmentated version of the 
+   image based in a low saturated, any HUE and the variable 
+   range of the parameter Value (which indicates the light/dark)
+
+*/
+
+
+// Pre-set variables grey segmentation values
+#define MAX_GREY_HUE 179
+#define MIN_GREY_HUE 0
+#define MAX_GREY_SAT 40
+#define MIN_GREY_SAT 0
+#define MAX_GREY_VAL 255 // white
+#define MIN_GREY_VAL 0 // black
+
+
 class ColorTracking
 {
 
 private:
+	// NOTE: All this values should be parsed in to 
+
 	//Area Size;
 	int iLowArea;
 	int iHighArea;

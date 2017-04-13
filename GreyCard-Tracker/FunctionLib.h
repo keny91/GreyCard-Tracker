@@ -10,7 +10,13 @@ using namespace std;
 using namespace cv;
 
 
+/*
+Description:
 
+is a library of static functions, mostly hosting image 
+morphology operations.
+
+*/
 
 
 static class FunctionLib

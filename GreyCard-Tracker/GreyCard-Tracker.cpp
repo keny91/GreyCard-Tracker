@@ -14,8 +14,9 @@
 
 void CallBackFunc(int event, int x, int y, int flags, void* userdata);
 
-int * state = new int();
-int clickedX = 0;
+int * state = new int();  // meant to be changed only on the asyncronous call onMouse
+// Mouse click coor, could be a Vec2i
+int clickedX = 0; 
 int clickedY = 0;
 
 int main()
