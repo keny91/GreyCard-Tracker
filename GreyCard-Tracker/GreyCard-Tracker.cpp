@@ -52,9 +52,7 @@ int main()
 		if(mode != 1 && mode != 2)
 			cout << "Invalid Mode input: " << mode << ", select a valid input: 1 or 2."<< endl;
 	}
-
 	cap >> frame;  // Get the first image of the video
-
 
 	switch (mode) {
 
